@@ -1,6 +1,7 @@
 const { findAll, addOne } = require("./model");
 const wkx = require("wkx");
 
+// --------------------------------------------------------------------------
 const getAll = (req, res) => {
   findAll()
     .then((markers) => {
@@ -30,18 +31,23 @@ const getAll = (req, res) => {
     .catch((err) => console.error(err));
 };
 
+// --------------------------------------------------------------------------
 const postNewPlace = (req, res) => {
   const { geometry, properties } = req.body;
   const geom = wkx.Geometry.parseGeoJSON(geometry).toWkb();
-  const { name, photo_url } = properties;
+  const { name } = properties;
+
+  if (!req.file) {
+    return res.status(400).json({ error: "Veuillez télécharger une image." });
+  }
+  const { filename } = req.file;
+  const photo_url = `../../../public/upload/${filename}`;
 
   const markerToInsert = {
     geometry: geom.toString("hex"),
     photo_url: photo_url,
     name: name,
   };
-
-  console.log(markerToInsert);
 
   addOne(markerToInsert)
     .then((insertedMarker) => {
@@ -53,6 +59,7 @@ const postNewPlace = (req, res) => {
     });
 };
 
+// --------------------------------------------------------------------------
 module.exports = {
   getAll,
   postNewPlace,

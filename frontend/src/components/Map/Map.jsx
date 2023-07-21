@@ -5,7 +5,7 @@ import "./Map.scss";
 import "mapbox-gl/dist/mapbox-gl.css";
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-function Map({ markers, isActivated, setNewMarker, newMarkerPosted }) {
+function Map({ markers, isActivated, setNewMarker }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const popupRef = useRef(
@@ -96,7 +96,7 @@ function Map({ markers, isActivated, setNewMarker, newMarkerPosted }) {
     if (isMounted) {
       getData();
     }
-  }, [isMounted, newMarkerPosted]);
+  }, [isMounted]);
 
   useEffect(() => {
     map.current.on("click", handleAddMarker);
@@ -107,7 +107,6 @@ function Map({ markers, isActivated, setNewMarker, newMarkerPosted }) {
   // Add a new marker
   const handleAddMarker = (event) => {
     if (isActivated) {
-      console.log("hello");
       const { lng, lat } = event.lngLat;
       const marker = {
         type: "Feature",

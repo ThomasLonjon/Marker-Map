@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Map from "./components/Map/Map";
-import QuoteForm from "./components/QuoteForm/QuoteForm";
 import "./App.scss";
 
 function App() {
@@ -9,11 +8,29 @@ function App() {
   const [newMarker, setNewMarker] = useState({});
   const [isActivated, setIsActivated] = useState(false);
   const [placeName, setPlaceName] = useState("");
-  const [newMarkerPosted, setNewMarkerPosted] = useState({});
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const newMarkerWithName = {
+      ...newMarker,
+      properties: { ...newMarker.properties, name: placeName },
+    };
+
+    setNewMarker(newMarkerWithName);
+  };
+
+  const handleChange = (event) => {
+    setPlaceName(event.target.value);
+  };
+
+  const handleImageChange = (event) => {
+    const selectedImage = event.target.files[0];
+    setNewMarker({ ...newMarker, photo: selectedImage });
+  };
 
   useEffect(() => {
     axios.get(`http://localhost:8090/markers/`).then((result) => setMarkers(result.data));
-  }, [newMarkerPosted]);
+  }, []);
 
   useEffect(() => {
     console.log("markers", markers);
@@ -23,10 +40,6 @@ function App() {
     console.log("newMarker", newMarker);
   }, [newMarker]);
 
-  useEffect(() => {
-    console.log("isActivated", isActivated);
-  }, [isActivated]);
-
   // Activate the addition of new marker when click on map
   const handleActivateNewMarker = () => {
     setIsActivated(true);
@@ -35,33 +48,34 @@ function App() {
   // Add the name to the marker and post it on DB
   const handlePostMarker = async () => {
     try {
-      const newMarkerWithName = {
-        ...newMarker,
-        properties: { ...newMarker.properties, name: placeName, photo_url: "test" },
-      };
+      const formData = new FormData();
+      formData.append("geometry", JSON.stringify(newMarker.geometry));
+      formData.append("properties", JSON.stringify({ name: placeName }));
+      formData.append("photo", newMarker.photo);
 
-      const response = await axios.post("http://localhost:8090/markers/newplace", newMarkerWithName);
+      const response = await axios.post("http://localhost:8090/markers/newplace", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log("Nouveau marqueur ajouté à la base de données :", response.data);
-
-      setNewMarkerPosted(newMarkerWithName);
     } catch (error) {
       console.error("Erreur lors de l'ajout du nouveau marqueur :", error);
     }
   };
 
-  useEffect(() => {
-    console.log(newMarkerPosted);
-  }, [newMarkerPosted]);
-
   return (
     <div className="page-container">
-      <Map markers={markers} isActivated={isActivated} setNewMarker={setNewMarker} newMarkerPosted={newMarkerPosted} />
+      <Map markers={markers} isActivated={isActivated} setNewMarker={setNewMarker} />
       <div className="place-section-container">
         <button onClick={handleActivateNewMarker}> Ajouter un nouveau lieu </button>
+        <form className="QuoteForm" onSubmit={handleSubmit}>
+          <label htmlFor="character">Nom du lieu</label>
+          <input id="name" name="character" type="text" value={placeName} onChange={handleChange} />
+          <button type="submit">Valider le nom du lieu</button>
+        </form>
+        <input type="file" onChange={handleImageChange} />
         <button onClick={handlePostMarker}> Poster le lieu </button>
-      </div>
-      <div>
-        <QuoteForm placeName={placeName} setPlaceName={setPlaceName} />
       </div>
     </div>
   );
