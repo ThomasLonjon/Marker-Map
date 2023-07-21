@@ -34,6 +34,8 @@ const getAll = (req, res) => {
 // --------------------------------------------------------------------------
 const postNewPlace = (req, res) => {
   const { geometry, properties } = req.body;
+  console.log("geometry", geometry);
+  console.log("properties", properties);
   const geom = wkx.Geometry.parseGeoJSON(geometry).toWkb();
   const { name } = properties;
 
@@ -41,6 +43,7 @@ const postNewPlace = (req, res) => {
     return res.status(400).json({ error: "Veuillez télécharger une image." });
   }
   const { filename } = req.file;
+  console.log("filename", filename);
   const photo_url = `../../../public/upload/${filename}`;
 
   const markerToInsert = {
