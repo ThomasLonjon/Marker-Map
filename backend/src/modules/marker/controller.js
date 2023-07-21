@@ -33,19 +33,20 @@ const getAll = (req, res) => {
 
 // --------------------------------------------------------------------------
 const postNewPlace = (req, res) => {
-  const { geometry, properties } = req.body;
+  const markerData = JSON.parse(req.body.markerData);
+  const { properties, geometry } = markerData;
+  console.log("markerData", markerData);
   console.log("geometry", geometry);
   console.log("properties", properties);
   const geom = wkx.Geometry.parseGeoJSON(geometry).toWkb();
   const { name } = properties;
 
-  // if (!req.file) {
-  //   return res.status(400).json({ error: "Veuillez télécharger une image." });
-  // }
-  // const { filename } = req.file;
-  // console.log("filename", filename);
-  // const photo_url = `../../../public/upload/${filename}`;
-  const photo_url = `../../../public/upload/filename}`;
+  if (!req.file) {
+    return res.status(400).json({ error: "Veuillez télécharger une image." });
+  }
+  const { filename } = req.file;
+  console.log("filename", filename);
+  const photo_url = `../../../public/upload/${filename}`;
 
   const markerToInsert = {
     geometry: geom.toString("hex"),

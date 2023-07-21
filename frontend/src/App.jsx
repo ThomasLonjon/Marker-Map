@@ -48,7 +48,17 @@ function App() {
   // Add the name to the marker and post it on DB
   const handlePostMarker = async () => {
     try {
-      const response = await axios.post("http://localhost:8090/markers/newplace", newMarker);
+      const formData = new FormData();
+      formData.append("photo", newMarker.photo);
+
+      const markerData = {
+        properties: { name: placeName },
+        geometry: newMarker.geometry,
+      };
+
+      formData.append("markerData", JSON.stringify(markerData));
+
+      const response = await axios.post("http://localhost:8090/markers/newplace", formData);
       console.log("Nouveau marqueur ajouté à la base de données :", response.data);
     } catch (error) {
       console.error("Erreur lors de l'ajout du nouveau marqueur :", error);
