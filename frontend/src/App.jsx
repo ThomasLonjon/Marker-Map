@@ -24,8 +24,8 @@ function App() {
   };
 
   const handleImageChange = (event) => {
-    // const selectedImage = event.target.files[0];
-    // setNewMarker({ ...newMarker, photo: selectedImage });
+    const selectedImage = event.target.files[0];
+    setNewMarker({ ...newMarker, photo: selectedImage });
   };
 
   useEffect(() => {
