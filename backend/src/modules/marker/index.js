@@ -5,7 +5,6 @@ const { getAll, postNewPlace } = require("./controller");
 
 router.get("/", getAll);
 
-// router.post("/newplace", fileUpload.single("photo"), postNewPlace);
-router.post("/newplace", postNewPlace);
+router.post("/newplace", fileUpload.single("photo"), postNewPlace);
 
 module.exports = router;
