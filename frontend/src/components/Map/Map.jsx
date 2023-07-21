@@ -5,7 +5,7 @@ import "./Map.scss";
 import "mapbox-gl/dist/mapbox-gl.css";
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-function Map({ markers, isActivated, setNewMarker }) {
+function Map({ markers, isActivated, setNewMarker, setClickedLocation }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const popupRef = useRef(
@@ -79,10 +79,8 @@ function Map({ markers, isActivated, setNewMarker }) {
     });
 
     map.current.on("click", "locations", (e) => {
-      const id = e.features[0].properties.location_id;
-      const name = e.features[0].properties.name;
-      const image = e.features[0].properties.image;
-      setClickedLocation({ id: parseInt(id), name: name, image: image });
+      const id = e.features[0].properties.id;
+      setClickedLocation(id);
     });
   }, []);
 

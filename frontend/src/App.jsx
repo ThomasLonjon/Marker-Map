@@ -8,6 +8,7 @@ function App() {
   const [newMarker, setNewMarker] = useState({});
   const [isActivated, setIsActivated] = useState(false);
   const [placeName, setPlaceName] = useState("");
+  const [clickedLocation, setClickedLocation] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -65,9 +66,19 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    console.log("clickedLocation", clickedLocation);
+    console.log(markers[clickedLocation]?.properties.photo_url);
+  }, [clickedLocation]);
+
   return (
     <div className="page-container">
-      <Map markers={markers} isActivated={isActivated} setNewMarker={setNewMarker} />
+      <Map
+        markers={markers}
+        isActivated={isActivated}
+        setNewMarker={setNewMarker}
+        setClickedLocation={setClickedLocation}
+      />
       <div className="place-section-container">
         <button onClick={handleActivateNewMarker}> Ajouter un nouveau lieu </button>
         <form className="QuoteForm" onSubmit={handleSubmit}>
@@ -77,6 +88,7 @@ function App() {
         </form>
         <input type="file" name="monfichier" onChange={handleImageChange} />
         <button onClick={handlePostMarker}> Poster le lieu </button>
+        <img src="http://localhost:8090/1689952271633-istanbul.jpg" alt="picture" />
       </div>
     </div>
   );
